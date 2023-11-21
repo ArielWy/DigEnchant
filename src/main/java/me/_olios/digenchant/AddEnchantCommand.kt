@@ -11,7 +11,7 @@ class AddEnchantCommand(private val plugin: DigEnchant): CommandExecutor {
         if (sender !is Player) return false
 
         val itemInHand = sender.inventory.itemInMainHand.type
-        if (!itemInHand.isItem) return false
+        if (!itemInHand.isItem || itemInHand.isAir) return false
         if (args.isNullOrEmpty() || args[0].toIntOrNull() == null) return false
         val enchantLevel = args[0].toInt()
         val itemStack = sender.inventory.itemInMainHand

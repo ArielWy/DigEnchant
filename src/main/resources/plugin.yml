@@ -2,3 +2,7 @@ name: DigEnchant
 version: '${project.version}'
 main: me._olios.digenchant.DigEnchant
 api-version: 1.20
+commands:
+  dig:
+    usage: /<command>
+    description: set the dig enchant on the held item
