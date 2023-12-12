@@ -8,41 +8,73 @@ import org.bukkit.inventory.ItemStack
 
 
 class DigAction(private val plugin: DigEnchant, private val player: Player) {
-    fun whenMined(centralBlock: Block, item: ItemStack?, blockFace: BlockFace, size: Int) {
+
+
+    fun whenMined(centralBlock: Block, item: ItemStack?, blockFace: BlockFace?, size: Int) {
+
+        player.sendMessage("whenMined")
+
         val range = (size - 1) / 2
 
+        when (blockFace) {
+            BlockFace.UP, BlockFace.DOWN -> breakUpDown(centralBlock, range)
+            BlockFace.NORTH, BlockFace.SOUTH -> breakNorthSouth(centralBlock, range)
+            BlockFace.EAST, BlockFace.WEST -> breakEastWest(centralBlock, range)
+            else -> {}
+        }
+    }
+
+    private fun breakUpDown(centralBlock: Block, range: Int) {
+
+        player.sendMessage("breakUpDown")
+
+        // gets the x,y,z coordination
+        val centerX = centralBlock.x
+        val centerY = centralBlock.y
+        val centerZ = centralBlock.z
+
+        // create a loop that break all the blocks
         for (dx in -range..range) {
-            for (dy in -range..range) {
-                for (dz in -range..range) {
-                    val blockToDestroy = when (blockFace) {
-                        BlockFace.UP, BlockFace.DOWN -> centralBlock.getRelative(dx, dy, 0)
-                        BlockFace.NORTH, BlockFace.SOUTH -> centralBlock.getRelative(dx, 0, dz)
-                        BlockFace.EAST, BlockFace.WEST -> centralBlock.getRelative(0, dy, dz)
-                        else -> centralBlock
-                    }
-                    blockToDestroy.breakNaturally(item)
-                }
+            for (dz in -range..range) {
+                val blockToBreak = centralBlock.world.getBlockAt(centerX + dx, centerY, centerZ + dz)
+                blockToBreak.breakNaturally()
             }
         }
     }
 
+    private fun breakNorthSouth(centralBlock: Block, range: Int) {
 
+        player.sendMessage("breakNorthSouth")
 
-    fun getBlocks(block: Block): List<Block> {
-        val faces = listOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.SELF)
-        return faces.flatMap { face ->
-            faces.map { block.getRelative(face).getRelative(it) }
+        // gets the x,y,z coordination
+        val centerX = centralBlock.x
+        val centerY = centralBlock.y
+        val centerZ = centralBlock.z
+
+        // create a loop that break all the blocks
+        for (dx in -range..range) {
+            for (dy in -range..range) {
+                val blockToBreak = centralBlock.world.getBlockAt(centerX + dx, centerY + dy, centerZ)
+                blockToBreak.breakNaturally()
+            }
         }
     }
 
-    private fun blockFace(): BlockFace {
-        // Get the player's direction
-        return when (((player.location.yaw - 90) % 360).toDouble().let { if (it < 0) it + 360 else it }) {
-            in 0.0..45.0, in 315.0..360.0 -> BlockFace.WEST
-            in 45.0..135.0 -> BlockFace.NORTH
-            in 135.0..225.0 -> BlockFace.EAST
-            in 225.0..315.0 -> BlockFace.SOUTH
-            else -> BlockFace.SOUTH
+    private fun breakEastWest(centralBlock: Block, range: Int) {
+
+        player.sendMessage("breakEastWest")
+
+        // gets the x,y,z coordination
+        val centerX = centralBlock.x
+        val centerY = centralBlock.y
+        val centerZ = centralBlock.z
+
+        // create a loop that break all the blocks
+        for (dy in -range..range) {
+            for (dz in -range..range) {
+                val blockToBreak = centralBlock.world.getBlockAt(centerX, centerY + dy, centerZ + dz)
+                blockToBreak.breakNaturally()
+            }
         }
     }
 }
