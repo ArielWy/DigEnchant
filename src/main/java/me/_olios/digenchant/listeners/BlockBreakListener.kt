@@ -21,6 +21,7 @@ class BlockBreakListener(private val plugin: DigEnchant): Listener {
         val block = event.block
         val blockFace = DigEnchantData.SharedData.lastBlockFace[player]
         val item = player.itemInUse
-        DigAction(plugin, player).whenMined(block, item, blockFace, 3)
+        val xpVal = event.expToDrop
+        DigAction(plugin, player).whenMined(block, item, xpVal, blockFace, 3)
     }
 }
