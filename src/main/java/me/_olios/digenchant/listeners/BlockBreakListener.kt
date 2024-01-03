@@ -14,6 +14,12 @@ class BlockBreakListener(private val plugin: DigEnchant): Listener {
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
+        if (event.block.hasMetadata("brokenByDigEnchant")) {
+            // This block was broken by the plugin
+            event.block.removeMetadata("brokenByDigEnchant", plugin)
+            return
+        }
+
         val player = event.player
         val itemInHand = player.inventory.itemInMainHand.type
 
@@ -22,6 +28,6 @@ class BlockBreakListener(private val plugin: DigEnchant): Listener {
         val blockFace = DigEnchantData.SharedData.lastBlockFace[player]
         val item = player.itemInUse
         val xpVal = event.expToDrop
-        DigAction(plugin, player).whenMined(block, item, xpVal, blockFace, 3)
+        DigAction(plugin, player).whenMined(block, item, blockFace, 3)
     }
 }
